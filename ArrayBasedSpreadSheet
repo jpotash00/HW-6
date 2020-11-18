@@ -1,0 +1,147 @@
+public class ArrayBasedSpreadSheet{
+    private String [][] ABSpreadSheet;
+
+    public static void main(String[]args){
+        ArrayBasedSpreadSheet ab = new ArrayBasedSpreadSheet(6,6);
+        ab.setValue('A', 3, "A1 - C4");
+        ab.setValue('A', 1, "5");
+        ab.setValue('C', 4, "4");
+        System.out.println(ab.getValue('A', 1));
+        System.out.println(ab.evaluateFormula('A', 3));
+        // System.out.println(ab.expandColumnRange('H'));
+    }
+    public ArrayBasedSpreadSheet(int rows, int columns){
+    	ABSpreadSheet = new String [columns][rows];
+    }
+    /**
+* @param showFormulas if true, show the raw cell formulas. If false, show the value generated
+by calculating the formulas.
+* @return a String, comma separated values representation of the entire spreadsheet. Each line
+ends with "\n"
+     */
+    public String getSpreadSheetAsCSV(boolean showFormulas){
+        return null;
+    }
+    
+    /**
+    * Sets a cell to given value, where the value is either a double or a cell formula.
+     * Formulas are written as two cell references separated by a basic math operation. There must
+be a space
+     * between each of the 3 elements, i.e. a space between the first cell reference and operation,
+and then another
+     * space between the operation and the second cell reference. Example formulas:
+     * Addition: A1 + C3
+     * Subtraction:  D7 - F6
+     * Multiplication: F15 * Z9
+     * Division: B6 / C2
+     *
+     * If the column or row is beyond the current bounds of the 2D array storing the spreadsheet,
+the size of the 2D array must be expanded as needed to store the value at column, row.
+     *
+* @param column column whose value to set, between 'A' and 'Z'
+* @param row row whose value to set. An integer >= 1
+* @param value must be either a string representation of a double or a cell formula
+*/
+    public void setValue(char column, int row, String value){
+
+        int c = (char)column-65;
+        ABSpreadSheet[c][row-1] = value;
+
+    }
+
+    /**
+     * Returns a complete copy of the spreadsheet data. Since it is a COPY, any edits to the copy
+will have no effect on the spreadsheet itself.
+* @return a complete copy of the spreadsheet data */
+public Object[][] getCopyOfData(){
+    String [][] SheetCopy;
+    for (int col = 0; col < ABSpreadsheet.length; col++){
+    for (int r = 0; r < ABSpreadSheet[row].length; r++){
+    ABSpreadSheet[c][row] = new SheetCopy[col][r];
+}
+/**
+* Expand the spreadhseet to extend it to the given column. 
+* @param column
+*/
+    public void expandColumnRange(char column){
+        int exC = (char)column-65;
+        c = exC;
+        return ABSpreadSheet[c][row-1];   
+}
+/**
+* Returns a copy of a given column through a given row.
+* If throughRow is larger than the current height of the column, all the values in the rows past
+the current column height will be null.
+* @param c the column to get, between 'A' and 'Z' 
+* @param throughRow the row to get a copy through.
+* @return
+*/
+public Object[] getCopyOfColumnThroughRow(char c, int throughRow){
+return null;
+}
+//---------------------------------------------
+ /** *
+* @param column (first column is A)
+* @param row (first row is 1)
+* @return value stored in that cell. If it holds a double, return the double. If it holds a
+formula, return the result of calculating the formula stored in the cell. If the cell is empty, it
+returns 0.
+*/
+    public double getValue(char column, int row){
+        int c = (char)column-65;
+        if (ABSpreadSheet[c][row-1] == null){
+            return 0;
+        }
+        else if (ABSpreadSheet[c][row-1].split(" ").length > 1){
+            System.out.println("Evaluating Expression" + column + row);
+            evaluateFormula(column,row);
+        }
+        else {
+             double value = Double.parseDouble(ABSpreadSheet[c][row-1]);
+            return value;
+    }
+    
+    System.out.println("negative one");
+    return -1;
+    }
+//----------------------------
+/** *
+* @param cell the cell whose value should be returned. E.g. "A1" or "F9", etc. 
+* @return
+*/
+    public double getValue(String cell){
+         char letter = cell.charAt(0);
+         int number = Integer.parseInt(cell.substring(1));
+         return getValue(letter, number);
+    }
+//------------------------------------
+/**
+* Evaluate the formula held in the given cell 
+* @param column 'A' through 'Z'
+* @param row row number, 1 or greater
+* @return
+*/
+    public double evaluateFormula(char column, int row){
+        int c = (char)column-65;
+        String [] formulaArray = ABSpreadSheet[c][row-1].split(" ");
+        String operand1 = formulaArray[0];
+        String op = formulaArray[1];
+        String operand2 = formulaArray[2];
+        double x = getValue(operand1);
+        double y = getValue(operand2);
+
+        switch(op.charAt(0)){
+            case '+':
+                return x+y; 
+            case '-':
+                return x-y;
+            case '*':
+                return x*y;
+            case '/':
+                return x/y;
+            default: 
+            return -1;
+            }
+    }
+}
+
